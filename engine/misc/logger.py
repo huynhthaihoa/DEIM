@@ -12,6 +12,7 @@ from typing import Dict
 
 import torch
 import torch.distributed as tdist
+from tqdm import tqdm
 
 from .dist_utils import is_dist_available_and_initialized, get_world_size
 
@@ -212,7 +213,7 @@ class MetricLogger(object):
                 'data: {data}'
             ])
         MB = 1024.0 * 1024.0
-        for obj in iterable:
+        for obj in tqdm(iterable):
             data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
