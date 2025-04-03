@@ -45,6 +45,9 @@ class BaseSolver(object):
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         self.model = cfg.model
+        
+        # print("model:", self.model)
+        # exit(-1)
 
         # NOTE: Must load_tuning_state before EMA instance building
         if self.cfg.tuning:
@@ -154,9 +157,9 @@ class BaseSolver(object):
     def load_resume_state(self, path: str):
         """Load resume"""
         if path.startswith('http'):
-            state = torch.hub.load_state_dict_from_url(path, map_location='cpu')
+            state = torch.hub.load_state_dict_from_url(path, map_location='cpu', weights_only=False)
         else:
-            state = torch.load(path, map_location='cpu')
+            state = torch.load(path, map_location='cpu', weights_only=False)
 
         # state['model'] = remove_module_prefix(state['model'])
         self.load_state_dict(state)
@@ -164,11 +167,14 @@ class BaseSolver(object):
     def load_tuning_state(self, path: str):
         """Load model for tuning and adjust mismatched head parameters"""
         if path.startswith('http'):
-            state = torch.hub.load_state_dict_from_url(path, map_location='cpu')
+            state = torch.hub.load_state_dict_from_url(path, map_location='cpu', weights_only=False)
         else:
-            state = torch.load(path, map_location='cpu')
+            state = torch.load(path, map_location='cpu', weights_only=False)
 
         module = dist_utils.de_parallel(self.model)
+        
+        # print(type(self.model))
+        # exit(0)
 
         # Load the appropriate state dict
         if 'ema' in state:

@@ -6,13 +6,12 @@ Modified from D-FINE (https://github.com/Peterande/D-FINE)
 Copyright (c) 2024 D-FINE authors. All Rights Reserved.
 """
 
-import torch
 import torch.nn as nn
 
 import torchvision
 import torchvision.transforms.v2 as T
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ._transforms import EmptyTransform
 from ...core import register, GLOBAL_CONFIG
@@ -84,6 +83,7 @@ class Compose(T.Compose):
             else:
                 with_mosaic = False
             for transform in self.transforms:
+                # print("transform:", type(transform).__name__)
                 # TODO print the transform to get the order
                 if (type(transform).__name__ in policy_ops and cur_epoch < policy_epoch[0]):   # first stage: NoAug
                     pass
